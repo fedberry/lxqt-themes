@@ -1,6 +1,6 @@
 Name:           lxqt-themes
 Version:        0.13.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        LXQt standard themes
 
 License:        LGPLv2+
@@ -41,6 +41,9 @@ Requires: lxqt-theme = %{version}
 Requires: breeze-cursor-theme
 Requires: breeze-icon-theme
 Requires: plasma-breeze
+# Obsolete and provide the old subpackage of lxqt-common
+Provides:       lxqt-theme-fedora = %{version}-%{release}
+Obsoletes:      lxqt-theme-fedora < %{version}-%{release}
 
 %description fedora
 %{summary}.
@@ -89,6 +92,10 @@ exit
 %{_datadir}/lxqt/themes/fedora-lxqt
 
 %changelog
+* Mon Sep 03 2018 Zamir SUN <zsun@fedoraproject.org> - 0.13.0-5
+- Obsolete and provide the old subpackage of lxqt-common
+- Fixes RHBZ 1624739
+
 * Sun Aug 26 2018 Zamir SUN <zsun@fedoraproject.org> - 0.13.0-4
 - Merge lxqt-themes-fedora into lxqt-themes
 
