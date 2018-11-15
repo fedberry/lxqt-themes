@@ -1,68 +1,65 @@
 Name:           lxqt-themes
 Version:        0.13.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        LXQt standard themes
 
 License:        LGPLv2+
 URL:            https://lxqt.org/
 Source0:        https://downloads.lxqt.org/downloads/%{name}/%{version}/%{name}-%{version}.tar.xz
-# Pagure do not provide tarballs yet.
-# To generate this tarball, clone from pagure
-# https://pagure.io/lxqt-themes-fedora/
-# Remove the .git dir and manual compress it
-Source1:        lxqt-themes-fedora-1.0.tar.xz
-
+Source1:        lxqt-themes-fedberry.tar.xz
 BuildArch:      noarch
 
 BuildRequires:  lxqt-build-tools
 BuildRequires:  pkgconfig(lxqt)
 
 Requires:       hicolor-icon-theme
-Requires:       fedora-logos
 Requires:       desktop-backgrounds-compat
 Requires:       breeze-cursor-themes
 Requires:       breeze-icon-theme
 
-# The themes were essential part of the previous lxqt-common package which
-# no longer exists. Therefore we obsolete and provide it here:
 Provides:       lxqt-common = %{version}-%{release}
-Obsoletes:      lxqt-common < 0.12.0
-# The old name for the theme subpackage was lxqt-theme
 Provides:       lxqt-theme = %{version}-%{release}
+
+Obsoletes:      lxqt-common < 0.12.0
 Obsoletes:      lxqt-theme < 0.12.0
+
 
 %description
 This package contains the standard themes for the LXQt desktop, namely
 ambiance, dark, frost, kde-plasma, light and system.
 
-%package fedora
-Summary: Default Fedora theme for LXQt
+
+%package fedberry
+Summary: Default Fedberry theme for LXQt
 Requires: lxqt-theme = %{version}
 Requires: breeze-cursor-theme
 Requires: breeze-icon-theme
 Requires: plasma-breeze
-# Obsolete and provide the old subpackage of lxqt-common
-Provides:       lxqt-theme-fedora = %{version}-%{release}
-Obsoletes:      lxqt-theme-fedora < %{version}-%{release}
+Requires: fedberry-logos
 
-%description fedora
+Provides:       lxqt-theme-fedberry = %{version}-%{release}
+Obsoletes:      lxqt-theme-fedberry < %{version}-%{release}
+
+
+%description fedberry
 %{summary}.
+
 
 %prep
 %autosetup
 %setup -b 1
 
+
 %build
 mkdir -p %{_target_platform}
 pushd %{_target_platform}
-#    %%{cmake_lxqt} -DPULL_TRANSLATIONS=NO ..
      %{cmake} ..
 popd
 make %{?_smp_mflags} -C %{_target_platform}
 
-%if 0%{?fedora} >= 29
 
-pushd %{_builddir}/lxqt-themes-fedora-1.0
+# Build Fedberry theme
+pushd %{_builddir}/lxqt-themes-fedberry
 tar Jxf %{SOURCE1}
 mkdir -p %{_target_platform}
 pushd %{_target_platform}
@@ -70,14 +67,16 @@ pushd %{_target_platform}
 popd
 popd
 
-%endif
 
 %install
 make install/fast DESTDIR=%{buildroot} -C %{_target_platform}
-pushd %{_builddir}/lxqt-themes-fedora-1.0
+
+# Install Fedberry theme
+pushd %{_builddir}/lxqt-themes-fedberry
 make install/fast DESTDIR=%{buildroot} -C %{_target_platform}
 popd
 exit
+
 
 %files
 %license COPYING
@@ -87,11 +86,17 @@ exit
 %{_datadir}/lxqt/themes/{ambiance,dark,frost,kde-plasma,light,system}
 %{_datadir}/icons/hicolor/scalable/*/*.svg
 
-%files fedora
-%{_datadir}/sddm/themes/02-lxqt-fedora/
-%{_datadir}/lxqt/themes/fedora-lxqt
+
+%files fedberry
+%{_datadir}/lxqt/themes/fedberry
+
 
 %changelog
+* Thu Nov 15 2018 Vaughan <devel at agrez.net> - 0.13.0-6
+- Import into Fedberry (Thanks Fedora)
+- Add fedberry theme from depreciated lxqt-common pkg
+- Bump release
+
 * Mon Sep 03 2018 Zamir SUN <zsun@fedoraproject.org> - 0.13.0-5
 - Obsolete and provide the old subpackage of lxqt-common
 - Fixes RHBZ 1624739
